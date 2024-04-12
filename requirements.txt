@@ -2,4 +2,6 @@ bytewax==0.19
 python-dotenv
 scipy==1.13.0
 kafka-python==2.0.2
+pandas==2.0.3 
+river 
 scikit-learn==1.4.2

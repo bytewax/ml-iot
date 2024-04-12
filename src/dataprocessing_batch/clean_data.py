@@ -96,21 +96,3 @@ def impute_data_with_knn(deserialized_data):
     imputed_data = df.to_dict(orient='records')
 
     return imputed_data
-
-def serialize(data):
-    headers = data['fields']
-    serialized_data = []
-    
-    for entry in data['data']:
-        try:
-            # Create a dictionary for each entry, matching fields with values
-            entry_data = {headers[i]: entry[i] for i in range(len(headers))}
-            # Convert the dictionary to a JSON string and then encode it to bytes
-            entry_bytes = json.dumps(entry_data).encode('utf-8')
-            serialized_data.append(entry_bytes)
-        except IndexError:
-            # This block catches cases where the entry might not have all the fields
-            print("IndexError with entry:", entry)
-            continue
-
-    return serialized_data
