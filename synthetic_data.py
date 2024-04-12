@@ -83,7 +83,7 @@ def main():
     all_data = []  # List to store all generated data entries
 
     # Generate multiple synthetic data entries
-    for _ in range(5):  
+    for _ in range(500000):  
         synthetic_data = generate_synthetic_data(client, json_data)
         json_answer = extract_and_load_json(synthetic_data)
 
