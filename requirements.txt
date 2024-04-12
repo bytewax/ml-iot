@@ -1,0 +1,4 @@
+bytewax==0.19
+python-dotenv
+scipy==1.13.0
+kafka-python==2.0.2
