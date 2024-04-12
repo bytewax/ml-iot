@@ -1,11 +1,7 @@
-import openai
 import json
 from dotenv import load_dotenv
 import os
 from openai import OpenAI
-import re
-import aiohttp
-import asyncio
 
 load_dotenv(".env")
 # Load your API key from an environment variable or direct input (not secure)
@@ -80,7 +76,7 @@ def main():
     client = OpenAI(api_key=openai_key)
 
     # Open a file to write the results iteratively
-    with open('synthetic_data.json', 'w') as f:
+    with open('synthetic_data_1.json', 'w') as f:
         # Write initial part of JSON
         f.write('{' + f'"api_version": "1.0", "time_stamp": {json_data["time_stamp"]}, '
                 f'"data_time_stamp": {json_data["data_time_stamp"]}, "max_age": {json_data["max_age"]}, '
@@ -88,7 +84,7 @@ def main():
 
         first = True  # To handle comma separation in JSON array
         # Generate multiple synthetic data entries
-        for i in range(500):  # Change the range as needed
+        for i in range(100000):  # Change the range as needed
             try:
                 print(i)
                 print("-----\n")
