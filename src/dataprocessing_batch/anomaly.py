@@ -1,7 +1,17 @@
 from river import anomaly
 
 class AnomalyDetector:
+    """
+    Anomaly detector using HalfSpaceTrees from River library
+    
+    This class is used to detect anomalies in the data using online ML models
+    with the River library
+    """
+    
     def __init__(self, n_trees=10, height=8, window_size=72, seed=11):
+        """
+        Initialize the anomaly detector
+        """
         self.detector = anomaly.HalfSpaceTrees(
             n_trees=n_trees,
             height=height,
@@ -11,6 +21,9 @@ class AnomalyDetector:
         )
     
     def update(self, data):
+        """
+        Update the anomaly detector with new data
+        """
         # Check if 'pm1.0_cf_1' is not None and is a floatable type
         if data['pm1.0_cf_1'] is not None:
             try:
