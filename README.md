@@ -10,6 +10,8 @@ You can find Jupyter notebooks in the `notebooks` folder. You can run the notebo
 
 [Batch version](https://colab.research.google.com/drive/1QzIxn5rbIfNE99Ykm9ApxfyF2ytjQxSL?usp=sharing)
 
+[Streaming version](https://colab.research.google.com/drive/1775nLdTtEQQwZRw6PyB_lIh4hnhBhDh6?usp=sharing)
+
 ## Setting up the environment
 
 If you prefer to run this locally, set up a virtual environment and install dependencies. For example with conda.
