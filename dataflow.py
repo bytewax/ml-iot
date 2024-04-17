@@ -165,9 +165,4 @@ detect_anomalies_step = op.map("detect_anomalies", impute_deserialize, detect_an
 # Detect anomalies within threshold
 filter_anomalies = op.filter("filter_high_anomalies", detect_anomalies_step, filter_high_anomaly)
 
-
-# Output or further processing
-op.inspect("inspect_filtered_anomalies", filter_anomalies)
-
-
-run_main(flow)
+op.output("inspect_filtered_anomalies", filter_anomalies)
