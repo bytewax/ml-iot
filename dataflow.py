@@ -100,52 +100,40 @@ def process_and_impute_data(byte_data):
     # Return the processed data with the key
     return (key, sensor_data)
 
-class AnomalyDetector:
+class StatefulAnomalyDetector:
     """
-    Anomaly detector using HalfSpaceTrees from River library
-
-    This class is used to detect anomalies in the data using online ML models
-    with the River library
+    This class is a stateful object that encapsulates an anomaly detection model
+    from the River library and provides a method that uses this model to detect
+    anomalies in streaming data. The detect_anomaly method of this object is
+    passed to op.stateful_map, so the state is maintained across calls to this
+    method.
     """
-
-    def __init__(self, n_trees=10, height=8, window_size=72, seed=11):
-        """
-        Initialize the anomaly detector
-        """
+    def __init__(self, n_trees=10, height=8, window_size=72, seed=11, limit=(0.0, 1200)):
         self.detector = anomaly.HalfSpaceTrees(
             n_trees=n_trees,
             height=height,
             window_size=window_size,
-            limits={'pm1.0_cf_1': (0.0, 1200)},  # Ensure these limits make sense for your data
+            limits={'pm1.0_cf_1': limit},  # Ensure these limits make sense for your data
             seed=seed
         )
 
-    def update(self, data):
+    def detect_anomaly(self, key, data):
         """
-        Update the anomaly detector with new data
+        Detect anomalies in sensor data and update the anomaly score in the data.
         """
-        # Check if 'pm1.0_cf_1' is not None and is a floatable type
-        if data.get('pm1.0_cf_1') is not None:
+        value = data.get('pm1.0_cf_1')
+        if value is not None:
             try:
-                value = float(data['pm1.0_cf_1'])
+                value = float(value)
                 score = self.detector.score_one({'pm1.0_cf_1': value})
                 self.detector.learn_one({'pm1.0_cf_1': value})
                 data['anomaly_score'] = score
             except ValueError:
                 print(f"Skipping entry, invalid data for pm1.0_cf_1: {data['pm1.0_cf_1']}")
+                data['anomaly_score'] = None
         else:
             data['anomaly_score'] = None
-        return data
-
-
-# Initialize the anomaly detector
-anomaly_detector = AnomalyDetector()
-
-def detect_anomalies(data_tuple):
-    """Detect anomalies in sensor data."""
-    key, sensor_data = data_tuple
-    sensor_data = anomaly_detector.update(sensor_data)
-    return (key, sensor_data)
+        return key, data
 
 
 def filter_high_anomaly(data_tuple):
@@ -154,15 +142,20 @@ def filter_high_anomaly(data_tuple):
     # Check if 'anomaly_score' is greater than 0.7
     return data.get('anomaly_score', 0) > 0.7
 
+# Setup the dataflow
 flow = Dataflow("air-quality-flow")
 inp = op.input("inp", flow, SerializedInput(data))
 impute_deserialize = op.map("impute_deserialize", inp, process_and_impute_data)
 
 
 # Add anomaly detection to the dataflow
-detect_anomalies_step = op.map("detect_anomalies", impute_deserialize, detect_anomalies)
+anomaly_detector = StatefulAnomalyDetector()
+detect_anomalies_step = op.stateful_map("detect_anomalies", impute_deserialize, anomaly_detector.detect_anomaly)
 
 # Detect anomalies within threshold
 filter_anomalies = op.filter("filter_high_anomalies", detect_anomalies_step, filter_high_anomaly)
 
-op.output("inspect_filtered_anomalies", filter_anomalies)
+# Output or further processing
+op.inspect("inspect_filtered_anomalies", filter_anomalies)
+
+run_main(flow)

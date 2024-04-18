@@ -1,15 +1,15 @@
 from clean_data import serialize, deserialize, impute_data_with_knn
 import json 
 from anomaly import AnomalyDetector
+import requests 
 
 if __name__=="__main__":
 
     # Opening JSON file
-    f = open('data.json')
-    
-    # returns JSON object as 
-    # a dictionary
-    data = json.load(f)
+    url = 'https://raw.githubusercontent.com/bytewax/ml-iot/main/data.json'
+
+    resp = requests.get(url)
+    data = json.loads(resp.text)
 
     # Begin data processing
     # Serialize the data to bytes
