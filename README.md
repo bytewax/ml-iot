@@ -2,7 +2,9 @@
 
 In this repository, we will process IoT data containing air quality data from a sensor. We will use the River library to detect anomalies in the data.
 
-In this repository, we explore a two-fold approach, we first process the data in a batch manner, and then we process the data in a streaming manner.
+We explore a two-fold approach, we first process the data in a batch manner, and then we process the data in a streaming manner.
+
+Read the complete blog [here](https://bytewax.io/blog/batch-or-streaming-processing-for-iot-data)
 
 ## Running the notebooks
 
@@ -27,6 +29,29 @@ Then install the dependencies with pip.
 pip install -r requirements.txt
 ```
 
+## Batch processing
 
+The steps for batch processing are as follows:
+
+![](./img/batch-process.png)
+
+To run the batch version, run the following command:
+
+```bash
+cd src/dataprocessing_batch
+python main.py
+```
+
+## Stream processing
+
+The steps for streaming processing are as follows:
+
+![](./img/streaming-process.png)
+
+To run the streaming version, run the following command:
+
+```bash
+python -m bytewax.run dataflow:flow
+```
 
 
